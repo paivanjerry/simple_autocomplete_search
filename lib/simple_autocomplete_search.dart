@@ -5,25 +5,21 @@
 /// You can specify what happens when user clicks a suggestion.
 /// Hint text and borders are also customizable.
 
-
 library simple_autocomplete_search;
+
 import 'package:flutter/material.dart';
 
 class SimpleAutocompleteSearch extends StatefulWidget {
   final String hint;
   final List<String> suggestions;
+
   final Function onSelected;
   final Border border;
   final Function filter;
 
   SimpleAutocompleteSearch(
-      {Key key,
-        this.hint,
-        this.suggestions,
-        this.onSelected,
-        this.border,
-        this.filter})
-      : super(key: key);
+      {this.hint, this.suggestions, this.onSelected, this.border, this.filter})
+      : super();
 
   @override
   _SimpleAutocompleteSearchState createState() =>
@@ -31,16 +27,15 @@ class SimpleAutocompleteSearch extends StatefulWidget {
 }
 
 class _SimpleAutocompleteSearchState extends State<SimpleAutocompleteSearch> {
-
-
-  List<String> _tmpSuggestions = [];
+  List<String> _tmpSuggestions = []; // Will be shown to user
+  List<String> _allSuggestions = []; // Keeps all suggestion strings
   double _suggestionsHeight = 1;
   String _fieldText = "";
 
   @override
   void initState() {
     if (widget.suggestions == null) {
-      _tmpSuggestions = [
+      _allSuggestions = [
         "No suggestion list entered",
         "Foo",
         "Bar",
@@ -49,8 +44,9 @@ class _SimpleAutocompleteSearchState extends State<SimpleAutocompleteSearch> {
         "ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ"
       ];
     } else {
-      _tmpSuggestions = []..addAll(widget.suggestions);
+      _allSuggestions = []..addAll(widget.suggestions);
     }
+
     _textChanged(_fieldText);
 
     super.initState();
@@ -82,11 +78,11 @@ class _SimpleAutocompleteSearchState extends State<SimpleAutocompleteSearch> {
                     border: widget.border ??
                         Border(
                           left:
-                          BorderSide(width: 1.0, color: Color(0xFFbfbfbf)),
+                              BorderSide(width: 1.0, color: Color(0xFFbfbfbf)),
                           right:
-                          BorderSide(width: 1.0, color: Color(0xFFbfbfbf)),
+                              BorderSide(width: 1.0, color: Color(0xFFbfbfbf)),
                           bottom:
-                          BorderSide(width: 1.0, color: Color(0xFFbfbfbf)),
+                              BorderSide(width: 1.0, color: Color(0xFFbfbfbf)),
                         )),
                 child: Scrollbar(
                   child: ListView.builder(
@@ -117,15 +113,17 @@ class _SimpleAutocompleteSearchState extends State<SimpleAutocompleteSearch> {
 
   void _textChanged(String text) {
     _fieldText = text;
+
     _tmpSuggestions.clear();
 
-    for (String suggestion in widget.suggestions) {
-      if (widget.filter(suggestion, text) ?? _isValid(suggestion, text)) {
+    // Loop new list and add valid suggestions to original list.
+    for (String suggestion in _allSuggestions) {
+      if (_isValid(suggestion, text)) {
         _tmpSuggestions.add(suggestion);
       }
     }
     setState(() {});
-    print(_tmpSuggestions);
+
     int suggestionsLength = _tmpSuggestions.length;
     if (suggestionsLength == 0) {
       _suggestionsHeight = 1;
@@ -157,10 +155,11 @@ class _SimpleAutocompleteSearchState extends State<SimpleAutocompleteSearch> {
 
   void _handleSuggestionPress(String selected) {
     if (widget.onSelected == null) {
-      print("SimpleAutocompleteSearch: No selected function to handle pressing the element " +
-          "\"" +
-          selected +
-          "\"");
+      print(
+          "SimpleAutocompleteSearch: No selected function to handle pressing the element " +
+              "\"" +
+              selected +
+              "\"");
     } else {
       widget.onSelected(selected);
     }

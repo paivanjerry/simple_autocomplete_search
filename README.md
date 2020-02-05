@@ -7,7 +7,7 @@ Really simple and easy to use autocomplete field with suggestions. You can custo
 To get plugin up and running, add this to your pubspec.yaml
 ```
 dependencies:
-  simple_autocomplete_search: ^1.0.0
+  simple_autocomplete_search: ^1.0.1
 ```
 then get dependencies. In command line you can use
 ```
@@ -18,7 +18,9 @@ and last step is to import in your dart file by adding following line
 ```
 import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 ```
-
+ ## Pub Package
+ 
+ [Pub Package can be found here](https://pub.dev/packages/simple_autocomplete_search)
 
 ## Usage
 
@@ -28,10 +30,9 @@ All parameters are optional, making possible that you can test the package by ju
 ```
 SimpleAutocompleteSearch()
 ```
-Following gif represents the bare minimum app with SimpleAutocompleteSearch.
-<img src="https://github.com/paivanjerry/simple_autocomplete_search/master/demo_bare_minimum.gif">
-To use it with your list and onPressed function:
+Following gif demonstrates the bare minimum app with SimpleAutocompleteSearch. The code can be found in [examples](example/bare_minimum/lib/bare_minimum.dart).
 
+![Bare minimum demo](https://github.com/paivanjerry/simple_autocomplete_search/blob/master/demo_bare_minimum.gif)
 ```
 List<String> myList = ["foo", "bar"];
 void myFunction(String text){

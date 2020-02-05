@@ -11,7 +11,7 @@ import 'package:flutter/material.dart';
 
 class SimpleAutocompleteSearch extends StatefulWidget {
   final String hint;
-  final List<String> suggestions;
+  List<String> suggestions;
 
   final Function onSelected;
   final Border border;
@@ -28,14 +28,14 @@ class SimpleAutocompleteSearch extends StatefulWidget {
 
 class _SimpleAutocompleteSearchState extends State<SimpleAutocompleteSearch> {
   List<String> _tmpSuggestions = []; // Will be shown to user
-  List<String> _allSuggestions = []; // Keeps all suggestion strings
+
   double _suggestionsHeight = 1;
   String _fieldText = "";
 
   @override
   void initState() {
     if (widget.suggestions == null) {
-      _allSuggestions = [
+      widget.suggestions = [
         "No suggestion list entered",
         "Foo",
         "Bar",
@@ -43,10 +43,7 @@ class _SimpleAutocompleteSearchState extends State<SimpleAutocompleteSearch> {
         "abcdefghijklmnopqrstuvwxyzåäö",
         "ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ"
       ];
-    } else {
-      _allSuggestions = []..addAll(widget.suggestions);
     }
-
     _textChanged(_fieldText);
 
     super.initState();
@@ -117,8 +114,10 @@ class _SimpleAutocompleteSearchState extends State<SimpleAutocompleteSearch> {
     _tmpSuggestions.clear();
 
     // Loop new list and add valid suggestions to original list.
-    for (String suggestion in _allSuggestions) {
-      if (_isValid(suggestion, text)) {
+    for (String suggestion in widget.suggestions) {
+      if (widget.filter == null) {
+      } else {}
+      if (widget.filter(suggestion, text) ?? _isValid(suggestion, text)) {
         _tmpSuggestions.add(suggestion);
       }
     }

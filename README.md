@@ -57,6 +57,6 @@ bool myFiltering function(String wholeSuggestion, String typedCharacters)
 ```
 Following gif is from sample app providing all parameters to SimpleAutocompleteSearch
 
-![Bare minimum demo](https://github.com/paivanjerry/simple_autocomplete_search/blob/master/demowhole.gif)
+![Bare minimum demo](https://github.com/paivanjerry/simple_autocomplete_search/blob/master/demo_whole.gif)
 
 See the [examples](https://github.com/paivanjerry/simple_autocomplete_search/blob/master/example) to find out more.

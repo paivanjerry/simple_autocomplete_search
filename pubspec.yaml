@@ -1,6 +1,6 @@
 name: simple_autocomplete_search
 description: Simple autocomplete field with suggestions. You can customize the onPressed function and filtering function.
-version: 1.0.2+1
+version: 1.0.3
 homepage: "https://spotforest.com"
 
 environment:

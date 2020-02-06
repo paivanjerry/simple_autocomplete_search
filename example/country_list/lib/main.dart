@@ -63,6 +63,9 @@ class _MyAppState extends State<MyApp> {
                   hint: "Type country",
                   filter: myFiltering,
                   suggestions: countryList,
+                  hideSuggestionsOnCreate: false,
+                  tileMinHeight: 45,
+                  tileMaxHeight: 200,
                   onSelected: handleCountySelection,
                   border: Border(
                     left: BorderSide(width: 3.0, color: Color(0xFFF2B140)),
@@ -86,7 +89,7 @@ class _MyAppState extends State<MyApp> {
       return false;
     }
 
-    // If you want the default behavior after hiding list on empty, use this.
+    // If you want the rest of the filtering to behave like default, use this
     /*
      return suggestion.toLowerCase().contains(typed.toLowerCase());
     */

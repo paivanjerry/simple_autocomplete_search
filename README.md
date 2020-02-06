@@ -7,7 +7,7 @@ Really simple and easy to use autocomplete field with suggestions. You can custo
 To get plugin up and running, add following to your pubspec.yaml. Check the latest version number from [here](https://pub.dev/packages/simple_autocomplete_search).
 ```
 dependencies:
-  simple_autocomplete_search: ^1.0.2
+  simple_autocomplete_search: ^1.0.3
 ```
 Then get the dependencies using the code editor or command line. In command line you can use
 ```
@@ -45,11 +45,15 @@ SimpleAutocompleteSearch(onSelected: myFunction, suggestions: myList);
 SimpleAutocompleteSearch can take following parameters:
 ```
 SimpleAutocompleteSearch(
-    onSelected: myFunction,
-    suggestions: myList
-    filter: myFilteringFunction
-    hint: myString
-    border: myBorderWidget);
+    onSelected: Function(String),
+    suggestions: List<String>,
+    filter: Functions(String, String), // First string is suggestion, second is typed characters.
+    hint: String,
+    border: Border,
+    tileMinHeight: double, // default: 50
+    tileMaxHeight: double // default: infinity
+    hideSuggestionsOnInit: bool // default: true
+    )
 ```
 Filtering function must be in format:
 ```

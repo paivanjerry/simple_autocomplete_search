@@ -12,14 +12,23 @@ import 'package:flutter/material.dart';
 class SimpleAutocompleteSearch extends StatefulWidget {
   final String hint;
   List<String> suggestions;
-
   final Function onSelected;
   final Border border;
   final Function filter;
+  final bool hideSuggestionsOnCreate;
+  final double tileMinHeight;
+  final double tileMaxHeight;
 
-  SimpleAutocompleteSearch(
-      {this.hint, this.suggestions, this.onSelected, this.border, this.filter})
-      : super();
+  SimpleAutocompleteSearch({
+    this.hint,
+    this.suggestions,
+    this.onSelected,
+    this.border,
+    this.filter,
+    this.hideSuggestionsOnCreate,
+    this.tileMinHeight,
+    this.tileMaxHeight,
+  }) : super();
 
   @override
   _SimpleAutocompleteSearchState createState() =>
@@ -37,14 +46,24 @@ class _SimpleAutocompleteSearchState extends State<SimpleAutocompleteSearch> {
     if (widget.suggestions == null) {
       widget.suggestions = [
         "No suggestion list entered",
+        "Pass List of strings to value of \'suggestions\' key",
+        "suggestions: List<String>",
         "Foo",
         "Bar",
         "Abc",
         "abcdefghijklmnopqrstuvwxyzåäö",
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ"
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ",
+        "I am very long string. If you do not want the user to see the whole long text, You must use tileMaxHeight property. Normally tileMaxHeight is double.infinity. You can customize it. If you want it to be 200 just use tileMaxHeight:200. If you want to make sure everything fits, you could use double.infinity. Min height is also customizable, default value is 50. Happy codin' fo you!",
+        "abcdefghijklmnopqrstuvwxyzåäö"
       ];
     }
+
     _textChanged(_fieldText);
+
+    if (widget.hideSuggestionsOnCreate == null ||
+        widget.hideSuggestionsOnCreate == true) {
+      _suggestionsHeight = 1.0;
+    }
 
     super.initState();
   }
@@ -75,19 +94,19 @@ class _SimpleAutocompleteSearchState extends State<SimpleAutocompleteSearch> {
                     border: widget.border ??
                         Border(
                           left:
-                              BorderSide(width: 1.0, color: Color(0xFFbfbfbf)),
+                          BorderSide(width: 1.0, color: Color(0xFFbfbfbf)),
                           right:
-                              BorderSide(width: 1.0, color: Color(0xFFbfbfbf)),
+                          BorderSide(width: 1.0, color: Color(0xFFbfbfbf)),
                           bottom:
-                              BorderSide(width: 1.0, color: Color(0xFFbfbfbf)),
+                          BorderSide(width: 1.0, color: Color(0xFFbfbfbf)),
                         )),
                 child: Scrollbar(
                   child: ListView.builder(
                     itemBuilder: (context, position) {
                       return ConstrainedBox(
                         constraints: BoxConstraints(
-                          minHeight: 50,
-                          maxHeight: 100,
+                          minHeight: widget.tileMinHeight ?? 50,
+                          maxHeight: widget.tileMaxHeight ?? double.infinity,
                           maxWidth: double.infinity,
                           minWidth: double.infinity,
                         ),
@@ -135,11 +154,7 @@ class _SimpleAutocompleteSearchState extends State<SimpleAutocompleteSearch> {
   }
 
   bool _isValid(String suggestion, String characters) {
-    if (suggestion.toLowerCase().contains(characters.toLowerCase())) {
-      return true;
-    } else {
-      return false;
-    }
+    return suggestion.toLowerCase().contains(characters.toLowerCase());
   }
 
   void _handleFocusChanged(bool focus) {

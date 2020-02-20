@@ -135,9 +135,15 @@ class _SimpleAutocompleteSearchState extends State<SimpleAutocompleteSearch> {
     // Loop new list and add valid suggestions to original list.
     for (String suggestion in widget.suggestions) {
       if (widget.filter == null) {
-      } else {}
-      if (widget.filter(suggestion, text) ?? _isValid(suggestion, text)) {
-        _tmpSuggestions.add(suggestion);
+        // Go with the default filtering
+        if (_isValid(suggestion, text)) {
+          _tmpSuggestions.add(suggestion);
+        }
+      } else {
+        // Use custom filtering
+        if (widget.filter(suggestion, text)) {
+          _tmpSuggestions.add(suggestion);
+        }
       }
     }
     setState(() {});

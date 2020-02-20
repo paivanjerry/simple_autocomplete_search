@@ -1,5 +1,10 @@
 # Changelog
 
+[1.0.5]
+
+Somehow forgot to add the corrected file to previous version. Here it is now.
+
+
 [1.0.4]
 
 Fixed the crash when user does not provide a filtering function.

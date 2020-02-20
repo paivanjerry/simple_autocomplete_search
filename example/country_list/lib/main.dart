@@ -1,133 +1,187 @@
-/// This example app shows list of countries and reacts when user selects one.
-/// It uses all of version 1.0.2 customizable features.
+/// # Flutter SimpleAutocompleteSearch
+///
+/// Takes list as a parameter, shows suggestions when user types.
+/// You can specify how suggestions are filtered (default: case-insensitive contains).
+/// You can specify what happens when user clicks a suggestion.
+/// Hint text and borders are also customizable.
+
+library simple_autocomplete_search;
 
 import 'package:flutter/material.dart';
 
-import 'package:simple_autocomplete_search/simple_autocomplete_search.dart';
+class SimpleAutocompleteSearch extends StatefulWidget {
+  final String hint;
+  List<String> suggestions;
+  final Function onSelected;
+  final Border border;
+  final Function filter;
+  final bool hideSuggestionsOnCreate;
+  final double tileMinHeight;
+  final double tileMaxHeight;
 
-void main() {
-  runApp(MaterialApp(
-    title: 'Autocomplete full demo',
-    home: MyApp(),
-  ));
-}
+  SimpleAutocompleteSearch({
+    this.hint,
+    this.suggestions,
+    this.onSelected,
+    this.border,
+    this.filter,
+    this.hideSuggestionsOnCreate,
+    this.tileMinHeight,
+    this.tileMaxHeight,
+  }) : super();
 
-class MyApp extends StatefulWidget {
   @override
-  _MyAppState createState() => _MyAppState();
+  _SimpleAutocompleteSearchState createState() =>
+      _SimpleAutocompleteSearchState();
 }
 
-class _MyAppState extends State<MyApp> {
-  List<String> countryList = [
-    "United States",
-    "Finland",
-    "Germany",
-    "Armenia",
-    "Austria",
-    "Spain",
-    "London",
-    "Italy",
-    "Australia",
-    "China",
-    "Japan",
-    "Argentina",
-    "Armenia",
-    "Albania"
-  ];
+class _SimpleAutocompleteSearchState extends State<SimpleAutocompleteSearch> {
+  List<String> _tmpSuggestions = []; // Will be shown to user
 
-  String _comment = "";
+  double _suggestionsHeight = 1;
+  String _fieldText = "";
+
+  @override
+  void initState() {
+    if (widget.suggestions == null) {
+      widget.suggestions = [
+        "No suggestion list entered",
+        "Pass List of strings to value of \'suggestions\' key",
+        "suggestions: List<String>",
+        "Foo",
+        "Bar",
+        "Abc",
+        "abcdefghijklmnopqrstuvwxyzåäö",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ",
+        "I am very long string. If you do not want the user to see the whole long text, You must use tileMaxHeight property. Normally tileMaxHeight is double.infinity. You can customize it. If you want it to be 200 just use tileMaxHeight:200. If you want to make sure everything fits, you could use double.infinity. Min height is also customizable, default value is 50. Happy codin' fo you!",
+        "abcdefghijklmnopqrstuvwxyzåäö"
+      ];
+    }
+
+    _textChanged(_fieldText);
+
+    if (widget.hideSuggestionsOnCreate == null ||
+        widget.hideSuggestionsOnCreate == true) {
+      _suggestionsHeight = 1.0;
+    }
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text('Full demo autocomplete'),
-        ),
-        body: Container(
-          alignment: Alignment(
-            0.0,
-            -1.0,
-          ),
-          margin: new EdgeInsets.all(10),
-          child: SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                Container(
-                  margin: new EdgeInsets.all(10),
-                  child: Text(
-                    "Choose a country you want to travel",
-                    style: TextStyle(fontSize: 25, color: Color(0xFF000000)),
-                  ),
-                ),
-                SimpleAutocompleteSearch(
-                  hint: "Type country",
-                  filter: myFiltering,
-                  suggestions: countryList,
-                  hideSuggestionsOnCreate: false,
-                  tileMinHeight: 45,
-                  tileMaxHeight: 200,
-                  onSelected: handleCountySelection,
-                  border: Border(
-                    left: BorderSide(width: 3.0, color: Color(0xFFF2B140)),
-                    right: BorderSide(width: 3.0, color: Color(0xFFF2B140)),
-                    bottom: BorderSide(width: 3.0, color: Color(0xFFF2B140)),
-                    top: BorderSide(width: 3.0, color: Color(0xFFF2B140)),
-                  ),
-                ),
-                Text(_comment)
-              ],
+    return Container(
+      child: Column(
+        children: <Widget>[
+          Focus(
+            onFocusChange: _handleFocusChanged,
+            child: TextField(
+              onChanged: _textChanged,
+              decoration: new InputDecoration(
+                hintText: widget.hint ?? 'Insert text here',
+              ),
             ),
           ),
-        ));
+          ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: 1,
+              maxHeight: _suggestionsHeight,
+              maxWidth: double.infinity,
+              minWidth: double.infinity,
+            ),
+            child: Container(
+                decoration: BoxDecoration(
+                    border: widget.border ??
+                        Border(
+                          left:
+                          BorderSide(width: 1.0, color: Color(0xFFbfbfbf)),
+                          right:
+                          BorderSide(width: 1.0, color: Color(0xFFbfbfbf)),
+                          bottom:
+                          BorderSide(width: 1.0, color: Color(0xFFbfbfbf)),
+                        )),
+                child: Scrollbar(
+                  child: ListView.builder(
+                    itemBuilder: (context, position) {
+                      return ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minHeight: widget.tileMinHeight ?? 50,
+                          maxHeight: widget.tileMaxHeight ?? double.infinity,
+                          maxWidth: double.infinity,
+                          minWidth: double.infinity,
+                        ),
+                        child: ListTile(
+                          onTap: () {
+                            _handleSuggestionPress(_tmpSuggestions[position]);
+                          },
+                          title: Text(_tmpSuggestions[position]),
+                        ),
+                      );
+                    },
+                    itemCount: _tmpSuggestions.length,
+                  ),
+                )),
+          ),
+        ],
+      ),
+    );
   }
 
-  bool myFiltering(String suggestion, String typed) {
-    // Hide the list when typed text is empty
-    // Widgets default shows all suggestions when list is empty.
+  void _textChanged(String text) {
+    _fieldText = text;
 
-    if (typed == "") {
-      return false;
+    _tmpSuggestions.clear();
+
+    // Loop new list and add valid suggestions to original list.
+    for (String suggestion in widget.suggestions) {
+      if (widget.filter == null) {
+        // Go with the default filtering
+        if (_isValid(suggestion, text)) {
+          _tmpSuggestions.add(suggestion);
+        }
+      } else {
+        // Use custom filtering
+        if (widget.filter(suggestion, text)) {
+          _tmpSuggestions.add(suggestion);
+        }
+      }
     }
+    setState(() {});
 
-    // If you want the rest of the filtering to behave like default, use this
-    /*
-     return suggestion.toLowerCase().contains(typed.toLowerCase());
-    */
-
-    // Accept the suggestion if it starts with typed text.
-    // Widget default filtering checks if suggestion contains typed text.
-    return suggestion.toLowerCase().startsWith(typed.toLowerCase());
+    int suggestionsLength = _tmpSuggestions.length;
+    if (suggestionsLength == 0) {
+      _suggestionsHeight = 1;
+      return;
+    } else if (suggestionsLength > 4) {
+      _suggestionsHeight = 250.0;
+    } else {
+      _suggestionsHeight = suggestionsLength.toDouble() * 60 + 10;
+    }
   }
 
-  void handleCountySelection(String country) {
-    switch (country) {
-      case "Finland":
-        {
-          setState(() {
-            _comment =
-                "No you don't. It's freezing out there. It's not worth it."
-                " Finland is now removed from the list";
-            countryList.remove("Finland");
-          });
-        }
-        break;
+  bool _isValid(String suggestion, String characters) {
+    return suggestion.toLowerCase().contains(characters.toLowerCase());
+  }
 
-      case "London":
-        {
-          setState(() {
-            _comment = "Wrong answer, that's a city.";
-          });
-        }
-        break;
+  void _handleFocusChanged(bool focus) {
+    if (focus) {
+      _textChanged(_fieldText);
+    } else {
+      setState(() {
+        _suggestionsHeight = 1;
+      });
+    }
+  }
 
-      default:
-        {
-          setState(() {
-            _comment =
-                "That's a good choice! I would also like to visit $country.";
-          });
-        }
-        break;
+  void _handleSuggestionPress(String selected) {
+    if (widget.onSelected == null) {
+      print(
+          "SimpleAutocompleteSearch: No selected function to handle pressing the element " +
+              "\"" +
+              selected +
+              "\"");
+    } else {
+      widget.onSelected(selected);
     }
   }
 }

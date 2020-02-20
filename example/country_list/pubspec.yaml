@@ -8,7 +8,7 @@ environment:
   sdk: ">=2.1.0 <3.0.0"
 
 dependencies:
-  simple_autocomplete_search: 1.0.3
+  simple_autocomplete_search: 1.0.4
   flutter:
     sdk: flutter
 

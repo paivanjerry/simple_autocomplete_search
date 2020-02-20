@@ -7,7 +7,7 @@ Really simple and easy to use autocomplete field with suggestions. You can custo
 To get plugin up and running, add following to your pubspec.yaml. Check the latest version number from [here](https://pub.dev/packages/simple_autocomplete_search).
 ```
 dependencies:
-  simple_autocomplete_search: ^1.0.3
+  simple_autocomplete_search: ^1.0.4
 ```
 Then get the dependencies using the code editor or command line. In command line you can use
 ```

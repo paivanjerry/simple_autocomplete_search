@@ -1,4 +1,7 @@
 # Changelog
+[1.0.5]
+
+Fixed the case when user doesn't provide filter function
 
 [1.0.5]
 
